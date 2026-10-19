@@ -1,0 +1,6 @@
+# Sourced by every zsh (scripts included): keep it to plain environment variables
+export BAT_THEME=ansi
+export NVIM_APPNAME=nvim-minimax
+export EDITOR=nvim
+export NVIM_NO_NERD_FONT=1
+export VISUAL=$EDITOR

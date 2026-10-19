@@ -1,0 +1,73 @@
+# Interactive shells: plugins, keybindings, history, completion, aliases, integrations
+# Plugins are plain git clones in ~/.config/zsh/plugins (cloned on first use)
+ZSH_PLUGIN_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/plugins"
+_plugin_clone() {  # _plugin_clone <user/repo>
+  [[ -d "$ZSH_PLUGIN_DIR/${1:t}" ]] || git clone --depth 1 "https://github.com/$1" "$ZSH_PLUGIN_DIR/${1:t}"
+}
+_plugin_clone zsh-users/zsh-completions
+_plugin_clone Aloxaf/fzf-tab
+# _plugin_clone zsh-users/zsh-autosuggestions
+
+fpath=("$ZSH_PLUGIN_DIR/zsh-completions/src" $fpath)
+autoload -Uz compinit && compinit
+
+# fzf-tab must load after compinit
+source "$ZSH_PLUGIN_DIR/fzf-tab/fzf-tab.plugin.zsh"
+# source "$ZSH_PLUGIN_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# Keybindings
+bindkey -e
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+bindkey '^[w' kill-region
+
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt extended_history          # store timestamp + duration
+setopt share_history             # live sync across sessions (implies incremental append)
+setopt hist_expire_dups_first    # trim duplicates first when the file is full
+setopt hist_ignore_all_dups      # keep only the latest copy of a command
+setopt hist_find_no_dups         # no duplicates when searching
+setopt hist_save_no_dups
+setopt hist_ignore_space         # " cmd" with a leading space is not saved
+setopt hist_reduce_blanks        # strip superfluous blanks
+setopt hist_verify               # !! expands in the buffer before running
+setopt hist_fcntl_lock           # safer concurrent writes
+setopt no_hist_beep
+
+# Type a prefix then up/down to search history for it
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[OA' up-line-or-beginning-search
+bindkey '^[OB' down-line-or-beginning-search
+
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+# carapace displays candidates without the typed path prefix, so don't seed the fzf query with the typed input
+zstyle ':fzf-tab:*' query-string prefix first
+
+# Aliases
+alias ls='eza'
+alias cat="bat --plain --paging never"
+# alias vim="$EDITOR"
+# alias vi="$EDITOR"
+
+# Shell integrations
+eval "$(starship init zsh)"
+eval "$(direnv hook zsh)"
+eval "$(fzf --zsh)"
+eval "$(mise activate)"
+eval "$(zoxide init --cmd cd zsh)"
+
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
+source <(carapace _carapace)

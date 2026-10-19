@@ -1,0 +1,24 @@
+onboarding = false
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+[remote]
+manage_ssh_config = true
+
+[keys]
+remote_image_paste = "ctrl+v"
+
+[ui]
+mouse_capture = true
+copy_on_select = true
+
+[ui.toast]
+delivery = "terminal"
+
+[ui.toast.clipboard]
+enabled = true
+
+[terminal]
+kitty_graphics = true

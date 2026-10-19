@@ -1,0 +1,25 @@
+[settings]
+experimental = true
+
+[tools]
+bat = "latest"
+bun = "latest"
+carapace = "latest"
+direnv = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+gh = "latest"
+go = "latest"
+herdr = "latest"
+jq = "latest"
+lazygit = "latest"
+neovim = "latest"
+node = "latest"
+python = "3.12"
+ripgrep = "latest"
+sd = "latest"
+starship = "latest"
+uv = "latest"
+yq = "latest"
+zoxide = "latest"
